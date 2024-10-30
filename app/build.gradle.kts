@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-
-    id("com.google.devtools.ksp") version "1.9.0-1.0.12"
+    alias(libs.plugins.compose.compiler)
+    kotlin("plugin.serialization")
+    id("com.google.devtools.ksp") version "2.0.10-1.0.24"
 }
 
 android {
@@ -73,6 +74,11 @@ dependencies {
     implementation(libs.ktor.client.serialization)
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.resources)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.client.auth)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.okhttp)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.runtime.livedata)
@@ -82,4 +88,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.gson)
+
 }

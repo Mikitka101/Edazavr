@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Edazavr</string>
+    <string name="navigation_item_home">Home</string>
+    <string name="navigation_item_shopping_cart">Shopping cart</string>
+    <string name="navigation_item_previous_orders">Previous Orders</string>
+    <string name="navigation_item_bookmarks">Bookmarks</string>
+    <string name="navigation_item_addresses">Addresses</string>
+    <string name="navigation_item_cards">Cards</string>
+    <string name="navigation_item_courier">Become a courier</string>
+    <string name="navigation_item_restaurant">Become a partner</string>
 </resources>
