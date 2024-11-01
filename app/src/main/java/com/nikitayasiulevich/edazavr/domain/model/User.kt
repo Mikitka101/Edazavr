@@ -1,9 +1,8 @@
 package com.nikitayasiulevich.edazavr.domain.model
 
-import java.util.UUID
-
 data class User(
-    val id: UUID,
+    val id: String,
     val login: String,
+    val name: String,
     val roles: List<String>
 )

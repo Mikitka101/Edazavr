@@ -1,7 +1,5 @@
 package com.nikitayasiulevich.edazavr.presentation.auth
 
-import android.app.Application
-import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
@@ -16,37 +14,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun LoginScreen(
-    application: Application,
-    onLogin: () -> Unit
+    onLoginSucceed: () -> Unit
 ) {
-    val sharedPreferences = application.getSharedPreferences(
-        "com.nikitayasiulevich.edazavr.tokens",
-        Context.MODE_PRIVATE
-    )
-    if(sharedPreferences.getBoolean("is_auth", false)) {
-        onLogin()
-    }
+    var login by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
-    val viewModel = LoginViewModel(application)
+    val viewModel: LoginViewModel = viewModel()
+    val isAuthorized = viewModel.isAuthorized.observeAsState(initial = false)
+    val showError = viewModel.showError.observeAsState(initial = false)
+    val currentErrorState = showError.value
 
-    val tokens = viewModel.tokens.observeAsState()
-
-    var login by remember {
-        mutableStateOf("")
-    }
-
-    var password by remember {
-        mutableStateOf("")
+    if (isAuthorized.value) {
+        onLoginSucceed()
     }
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        tokens.value?.let { Text(text = it.accessToken) }
-        tokens.value?.let { Text(text = it.refreshToken) }
         TextField(
             value = login,
             textStyle = TextStyle(fontSize = 25.sp),
@@ -63,5 +51,10 @@ fun LoginScreen(
             Text(text = "login")
         }
 
+        if (currentErrorState) {
+            Text(
+                text = "Authorization error",
+            )
+        }
     }
 }

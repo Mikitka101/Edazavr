@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.nikitayasiulevich.edazavr"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.nikitayasiulevich.edazavr"
@@ -70,6 +70,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(libs.arrow.core)
+    implementation(libs.arrow.fx.coroutines)
     implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.serialization)
     implementation(libs.ktor.client.logging)

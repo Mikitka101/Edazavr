@@ -32,19 +32,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.nikitayasiulevich.edazavr.navigation.AppNavGraph
 import com.nikitayasiulevich.edazavr.navigation.Screen
+import com.nikitayasiulevich.edazavr.navigation.navGraph.AppNavGraph
 import com.nikitayasiulevich.edazavr.navigation.rememberNavigationState
 import com.nikitayasiulevich.edazavr.presentation.auth.LoginScreen
+import com.nikitayasiulevich.edazavr.presentation.auth.RegisterScreen
 import com.nikitayasiulevich.edazavr.presentation.commons.NavigationItem
 import com.nikitayasiulevich.edazavr.presentation.home.HomeScreen
 import com.nikitayasiulevich.edazavr.presentation.menu.MenuScreen
-import com.nikitayasiulevich.edazavr.presentation.order.OrderScreen
+import com.nikitayasiulevich.edazavr.presentation.profile.ProfileScreen
 import com.nikitayasiulevich.edazavr.presentation.shoppingCart.ShoppingCartScreen
 import com.nikitayasiulevich.edazavr.ui.theme.Gray
 import com.nikitayasiulevich.edazavr.ui.theme.Red40
 import com.nikitayasiulevich.edazavr.ui.theme.WhiteEE
 import com.nikitayasiulevich.edazavr.ui.theme.WhiteFF
+import com.nikitayasiulevich.edazavr.utils.Constants
 
 @Composable
 fun MainScreen(
@@ -54,7 +56,6 @@ fun MainScreen(
     val navigationState = rememberNavigationState()
 
     val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
-
 
     Scaffold(
         containerColor = WhiteEE,
@@ -124,44 +125,43 @@ fun MainScreen(
                 }
             }
         }
-    ) { paddingValues ->
+    ) { _ ->
         AppNavGraph(
             navHostController = navigationState.navHostController,
-            isUserLogIn = application.getSharedPreferences(
-                "com.nikitayasiulevich.edazavr.tokens",
+
+            isUserLoggedIn = application.getSharedPreferences(
+                Constants.SHARED_PREF_NAME,
                 Context.MODE_PRIVATE
             ).getBoolean("is_auth", false),
+
             loginScreenContent = {
                 bottomBarState.value = false
-                LoginScreen(application) { navigationState.navigateTo(Screen.Home.route) }
+                LoginScreen { navigationState.navigateToHomeGraph() }
+            },
+            registerScreenContent = {
+                bottomBarState.value = false
+                RegisterScreen(application) { navigationState.navigateTo(Screen.HomeGraph.route) }
             },
             homeScreenContent = {
                 bottomBarState.value = true
                 HomeScreen(
-                    paddingValues = paddingValues,
-                    onMenuClickListener = { navigationState.navigateToMenu() }
+                    onMenuClickListener = { userId -> navigationState.navigateToMenu(userId) },
+                    onRestaurantClickListener = {}
                 )
             },
-            shoppingCartScreenContent = {
-                bottomBarState.value = true
-                ShoppingCartScreen(
-                    paddingValues = paddingValues,
-                    onOrderClickListener = { order ->
-                        navigationState.navigateToOrder(order)
-                    }
-                )
-            },
-            menuScreenContent = {
+            menuScreenContent = { userId ->
                 bottomBarState.value = false
                 MenuScreen(
+                    userId = userId,
                     onBackPressed = {
                         navigationState.navHostController.popBackStack()
                     },
-                    onItemClickListener = { navItem ->
-                        navigationState.navigateInMenu(navItem.screen.route)
+                    onItemClickListener = { navItem, user ->
+                        navigationState.navigateInMenu(navItem.screen.route, user)
                     },
                     menuItems = listOf(
-                        NavigationItem.PreviousOrders,
+                        NavigationItem.Profile,
+                        NavigationItem.Orders,
                         NavigationItem.Bookmarks,
                         NavigationItem.Addresses,
                         NavigationItem.Cards,
@@ -170,22 +170,27 @@ fun MainScreen(
                     )
                 )
             },
-            previousOrdersScreenContent = {
-                Text(text = "previousOrdersScreenContent")
-            },
-            bookmarksScreenContent = {},
-            addressesScreenContent = {},
-            cardsScreenContent = {},
-            courierScreenContent = {},
-            restaurantScreenContent = {},
-            orderScreenContent = { order ->
-                bottomBarState.value = false
-                OrderScreen(
-                    orderDTO = order,
+            profileScreenContent = { userId ->
+                ProfileScreen(
+                    userId = userId,
                     onBackPressed = {
                         navigationState.navHostController.popBackStack()
+                    },
+                    onLogoutClickListener = {
+                        navigationState.navigateToLogin(Screen.AuthGraph.route)
                     }
                 )
+            },
+            shoppingCartScreenContent = {
+                bottomBarState.value = true
+                ShoppingCartScreen(
+                    onPayClickListener = { order ->
+                        navigationState.navigateToPayment(order)
+                    }
+                )
+            },
+            paymentScreenContent = { userId ->
+                Text(text = userId)
             }
         )
     }

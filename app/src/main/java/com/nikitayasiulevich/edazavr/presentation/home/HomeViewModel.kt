@@ -5,13 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.nikitayasiulevich.edazavr.data.repository.DishRepository
 import com.nikitayasiulevich.edazavr.data.repository.RestaurantRepository
-import com.nikitayasiulevich.edazavr.domain.model.Dish
-import com.nikitayasiulevich.edazavr.domain.model.Restaurant
-import com.nikitayasiulevich.edazavr.domain.model.User
+import com.nikitayasiulevich.edazavr.data.repository.UserRepository
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -21,18 +17,18 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val screenState: LiveData<HomeScreenState> = _screenState
 
     private val restaurantRepository = RestaurantRepository(application)
+    private val userRepository = UserRepository(application)
 
     init {
         _screenState.value = HomeScreenState.Loading
-        loadRestaurants()
+        loadData()
     }
 
-    fun loadRestaurants() {
+    private fun loadData() {
         _screenState.value = HomeScreenState.Loading
         viewModelScope.launch {
             val restaurants = restaurantRepository.loadRestaurants()
-            val user =
-                User(id = UUID.randomUUID(), login = "client@gmail.com", roles = listOf("client"))
+            val user = userRepository.getUserData()
             _screenState.value = HomeScreenState.Restaurants(user = user, restaurants = restaurants)
         }
     }

@@ -1,30 +1,26 @@
-package com.nikitayasiulevich.edazavr.navigation
+package com.nikitayasiulevich.edazavr.navigation.navGraph
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.nikitayasiulevich.edazavr.navigation.Screen
+import com.nikitayasiulevich.edazavr.navigation.Screen.Companion.KEY_USER_ID
 
 fun NavGraphBuilder.homeScreenNavGraph(
-    isUserLogIn: Boolean,
-    loginScreenContent: @Composable () -> Unit,
     homeScreenContent: @Composable () -> Unit,
-    menuScreenContent: @Composable () -> Unit
+    menuScreenContent: @Composable (String) -> Unit,
 ) {
     navigation(
-        startDestination = if (isUserLogIn) Screen.Home.route else Screen.Login.route,
-        route = Screen.HomeGraph.route,
+        startDestination = Screen.Home.route,
+        route = Screen.HomeGraph.route
     ) {
-        composable(route = Screen.Login.route) {
-            loginScreenContent()
-        }
         composable(route = Screen.Home.route,
             enterTransition = {
                 slideIntoContainer(
@@ -40,8 +36,15 @@ fun NavGraphBuilder.homeScreenNavGraph(
             }) {
             homeScreenContent()
         }
-        composable(route = Screen.Menu.route) {
-            menuScreenContent()
+        composable(route = Screen.Menu.route,
+            arguments = listOf(
+                navArgument(KEY_USER_ID) {
+                    type = NavType.StringType
+                }
+            )) {
+            val userId = it.arguments?.getString(KEY_USER_ID) ?: ""
+            menuScreenContent(userId)
         }
     }
 }
+

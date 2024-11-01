@@ -1,14 +1,14 @@
 package com.nikitayasiulevich.edazavr.data.remote
 
 import android.content.Context
-import android.util.Log
+import arrow.core.Either
 import com.nikitayasiulevich.edazavr.data.model.RestaurantsListDto
 import com.nikitayasiulevich.edazavr.data.remote.request.LoginRequest
 import com.nikitayasiulevich.edazavr.data.remote.request.RefreshTokenRequest
 import com.nikitayasiulevich.edazavr.data.remote.response.AuthResponse
 import com.nikitayasiulevich.edazavr.data.remote.response.TokenResponse
-import com.nikitayasiulevich.edazavr.data.remote.response.UserResponse
-import com.nikitayasiulevich.edazavr.domain.model.Restaurant
+import com.nikitayasiulevich.edazavr.data.model.UserDTO
+import com.nikitayasiulevich.edazavr.utils.Constants
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -30,9 +30,12 @@ import kotlinx.serialization.json.Json
 
 interface ApiService {
 
-    suspend fun authorize(context: Context, loginRequest: LoginRequest): AuthResponse
+    suspend fun authorize(
+        context: Context,
+        loginRequest: LoginRequest
+    ): Either<Exception, AuthResponse>
 
-    suspend fun getPersonalData(): UserResponse
+    suspend fun getPersonalData(): Either<Exception, UserDTO>
 
     suspend fun getRestaurants(): RestaurantsListDto
 
@@ -41,7 +44,7 @@ interface ApiService {
     companion object {
         fun create(context: Context): ApiService {
             val sharedPreferences = context.getSharedPreferences(
-                "com.nikitayasiulevich.edazavr.tokens",
+                Constants.SHARED_PREF_NAME,
                 Context.MODE_PRIVATE
             )
             return ApiServiceImpl(
@@ -59,9 +62,9 @@ interface ApiService {
                         bearer {
                             loadTokens {
                                 val accessFromSP =
-                                    sharedPreferences.getString("access", "nothing") ?: "nothing"
+                                    sharedPreferences.getString("access", "") ?: ""
                                 val refreshFromSP =
-                                    sharedPreferences.getString("refresh", "nothing") ?: "nothing"
+                                    sharedPreferences.getString("refresh", "") ?: ""
                                 BearerTokens(
                                     accessToken = accessFromSP,
                                     refreshToken = refreshFromSP
@@ -69,8 +72,8 @@ interface ApiService {
                             }
                             refreshTokens {
                                 val currentRefreshToken =
-                                    sharedPreferences.getString("refresh", "nothing")
-                                        ?: "nothing"
+                                    sharedPreferences.getString("refresh", "")
+                                        ?: ""
                                 val refreshTokenRequest = RefreshTokenRequest(
                                     token = currentRefreshToken
                                 )

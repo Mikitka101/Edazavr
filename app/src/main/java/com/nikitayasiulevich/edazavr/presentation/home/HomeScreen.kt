@@ -32,8 +32,7 @@ import com.nikitayasiulevich.edazavr.ui.theme.Gray
 
 @Composable
 fun HomeScreen(
-    paddingValues: PaddingValues,
-    onMenuClickListener: () -> Unit,
+    onMenuClickListener: (String) -> Unit,
     onRestaurantClickListener: (Restaurant) -> Unit
 ) {
     val viewModel: HomeViewModel = viewModel()
@@ -44,7 +43,6 @@ fun HomeScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .then(Modifier.padding(paddingValues))
     ) { paddingValues ->
         when (currentState) {
             is HomeScreenState.Restaurants -> {
@@ -55,7 +53,7 @@ fun HomeScreen(
                 ) {
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(onClick = {
-                        onMenuClickListener()
+                        onMenuClickListener(currentState.user.id)
                     }) {
                         Text(text = "Menu")
                     }

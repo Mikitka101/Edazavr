@@ -31,9 +31,15 @@ sealed class NavigationItem(
 
     //Menu Items
 
-    data object PreviousOrders : NavigationItem(
-        screen = Screen.PreviousOrders,
-        titleResId = R.string.navigation_item_previous_orders,
+    data object Profile : NavigationItem(
+        screen = Screen.Profile,
+        titleResId = R.string.navigation_item_profile,
+        icon = Icons.TwoTone.Warning
+    )
+
+    data object Orders : NavigationItem(
+        screen = Screen.Orders,
+        titleResId =R.string.navigation_item_orders,
         icon = Icons.TwoTone.Warning
     )
 

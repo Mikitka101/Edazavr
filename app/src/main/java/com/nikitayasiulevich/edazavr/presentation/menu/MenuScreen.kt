@@ -9,12 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nikitayasiulevich.edazavr.presentation.commons.NavigationItem
@@ -29,8 +30,9 @@ import com.nikitayasiulevich.edazavr.ui.theme.LightGray
 
 @Composable
 fun MenuScreen(
+    userId: String,
     onBackPressed: () -> Unit,
-    onItemClickListener: (NavigationItem) -> Unit,
+    onItemClickListener: (NavigationItem, String) -> Unit,
     menuItems: List<NavigationItem>
 ) {
     Column(
@@ -58,23 +60,41 @@ fun MenuScreen(
             }
             Row(
                 modifier = Modifier
-                    .padding(end = 50.dp)
-                    .fillMaxWidth()
+                    .width(300.dp)
                     .height(56.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
                 Text(
-                    text = "Menu",
-                    fontSize = 22.sp
+                    text = "Menu - $userId",
+                    fontSize = 22.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            FloatingActionButton(
+                modifier = Modifier
+                    .size(50.dp),
+                shape = RoundedCornerShape(15.dp),
+                containerColor = LightGray,
+                onClick = {
+                    onItemClickListener(menuItems[0], userId)
+                }
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxSize(),
+                    imageVector = Icons.Outlined.Person,
+                    contentDescription = "profile"
                 )
             }
         }
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            items(count = menuItems.size,
+            items(count = menuItems.size - 1,
                 key = { index ->
                     index
                 }) {
@@ -82,10 +102,10 @@ fun MenuScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            onItemClickListener(menuItems[it])
+                            onItemClickListener(menuItems[it + 1], userId)
                         }
                 ) {
-                    Text(text = stringResource(id = menuItems[it].titleResId))
+                    Text(text = stringResource(id = menuItems[it + 1].titleResId))
                 }
             }
         }

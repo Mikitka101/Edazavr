@@ -17,11 +17,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-//Authorised
-/*application.getSharedPreferences(
-    "com.nikitayasiulevich.edazavr.tokens",
-    Context.MODE_PRIVATE
-).edit().putBoolean("is_auth", false).apply()*/
+
 
 
 /*private lateinit var service: ApiService*/

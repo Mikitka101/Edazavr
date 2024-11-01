@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.nikitayasiulevich.edazavr.data.repository.DishRepository
-import com.nikitayasiulevich.edazavr.data.repository.RestaurantRepository
 import com.nikitayasiulevich.edazavr.domain.model.Dish
 import com.nikitayasiulevich.edazavr.domain.model.Restaurant
 import com.nikitayasiulevich.edazavr.domain.model.User
@@ -35,7 +34,7 @@ class DishesViewModel(
         viewModelScope.launch {
             val dishes = dishRepository.loadDishes(restaurant)
             val user =
-                User(id = UUID.randomUUID(), login = "client@gmail.com", roles = listOf("client"))
+                User(id = UUID.randomUUID().toString(), login = "client@gmail.com", name = "Client", roles = listOf("client"))
             _screenState.value =
                 DishesScreenState.Dishes(user = user, restaurant = restaurant, dishes = dishes)
         }

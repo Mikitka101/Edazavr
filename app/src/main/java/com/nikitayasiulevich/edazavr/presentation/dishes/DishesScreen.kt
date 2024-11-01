@@ -28,18 +28,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.nikitayasiulevich.edazavr.domain.model.Dish
-import com.nikitayasiulevich.edazavr.domain.model.Restaurant
 import com.nikitayasiulevich.edazavr.ui.theme.Gray
 
 @Composable
 fun DishesScreen(
-    paddingValues: PaddingValues,
-    restaurant: Restaurant,
+    restaurantId: String,
     onMenuClickListener: () -> Unit,
 ) {
-    val viewModel: DishesViewModel = viewModel(
-        DishesViewModel(restaurant = restaurant)
-    )
+    val viewModel: DishesViewModel = viewModel()
+
     val screenState = viewModel.screenState.observeAsState(DishesScreenState.Initial)
 
     val currentState = screenState.value
@@ -47,42 +44,10 @@ fun DishesScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .then(Modifier.padding(paddingValues))
+
     ) { paddingValues ->
         when (currentState) {
-            is HomeScreenState.Restaurants -> {
-                Column(
-                    Modifier
-                        .padding(horizontal = 10.dp)
-                        .fillMaxSize()
-                ) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Button(onClick = {
-                        onMenuClickListener()
-                    }) {
-                        Text(text = "Menu")
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Restaurants(
-                        paddingValues = paddingValues,
-                        viewModel = viewModel,
-                        restaurants = currentState.restaurants,
-                        onRestaurantClickListener = { restaurant ->
-                            viewModel.loadDishes(restaurant)
-                        }
-                    )
-                }
-            }
-
-            is HomeScreenState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = Color.DarkGray)
-                }
-            }
-
-            is HomeScreenState.Dishes -> {
+            is DishesScreenState.Dishes -> {
                 Column(
                     Modifier
                         .padding(horizontal = 10.dp)
@@ -97,71 +62,25 @@ fun DishesScreen(
                     Spacer(modifier = Modifier.height(10.dp))
                     Dishes(
                         paddingValues = paddingValues,
-                        viewModel = viewModel,
                         dishes = currentState.dishes,
-                        onAddButtonListener = { dish ->
-                            viewModel.addDishToShoppingCart(dish)
-                        },
-                        nextDataIsLoading = currentState.nextDataIsLoading,
+                        onDishAddClickListener = { dish ->
+                            //viewModel.loadDishes(dish)
+                        }
                     )
                 }
             }
 
-            is HomeScreenState.Initial -> {
+            is DishesScreenState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color.DarkGray)
+                }
+            }
+
+            is DishesScreenState.Initial -> {
 
             }
-        }
-    }
-}
-
-@Composable
-fun Restaurants(
-    paddingValues: PaddingValues,
-    viewModel: HomeViewModel,
-    restaurants: List<Restaurant>,
-    onRestaurantClickListener: (Restaurant) -> Unit,
-) {
-
-    val state = rememberLazyListState()
-
-    LazyColumn(
-        state = state,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-    ) {
-        items(
-            count = restaurants.size,
-            key = { index ->
-                val restaurant = restaurants[index]
-                "${restaurant.id}${index}"
-            }
-        ) {
-            val restaurant = restaurants[it]
-            Box(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth()
-                    .height(250.dp)
-                    .background(color = Gray)
-                    .clip(
-                        RoundedCornerShape(25.dp)
-                    )
-                    .clickable { onRestaurantClickListener(restaurants[it]) },
-                contentAlignment = Alignment.Center
-
-            ) {
-                AsyncImage(
-                    model = restaurant.photoUrl,
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentDescription = restaurant.name,
-                    contentScale = ContentScale.Crop,
-                )
-            }
-            Text(text = "${restaurants[it].name} - ${restaurants[it].address}")
-
         }
     }
 }
@@ -169,10 +88,8 @@ fun Restaurants(
 @Composable
 fun Dishes(
     paddingValues: PaddingValues,
-    viewModel: HomeViewModel,
     dishes: List<Dish>,
-    onAddButtonListener: (Dish) -> Unit,
-    nextDataIsLoading: Boolean
+    onDishAddClickListener: (Dish) -> Unit,
 ) {
 
     val state = rememberLazyListState()
@@ -187,25 +104,34 @@ fun Dishes(
         items(
             count = dishes.size,
             key = { index ->
-                val dishes = dishes[index]
-                "${dishes.id}${index}"
+                val dish = dishes[index]
+                "${dish.id}${index}"
             }
         ) {
+            val dish = dishes[it]
             Box(
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth()
-                    .height(50.dp)
+                    .height(250.dp)
                     .background(color = Gray)
                     .clip(
-                        RoundedCornerShape(5.dp)
+                        RoundedCornerShape(25.dp)
                     )
-                    .clickable { onAddButtonListener(dishes[it]) },
+                    .clickable { onDishAddClickListener(dishes[it]) },
                 contentAlignment = Alignment.Center
 
             ) {
-                Text(text = "${dishes[it].name} - ${dishes[it].description}")
+                AsyncImage(
+                    model = dish.photoUrl,
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentDescription = dish.name,
+                    contentScale = ContentScale.Crop,
+                )
             }
+            Text(text = "${dishes[it].name} - ${dishes[it].description}")
+
         }
     }
 }
