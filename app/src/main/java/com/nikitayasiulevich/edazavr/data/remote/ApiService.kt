@@ -2,12 +2,17 @@ package com.nikitayasiulevich.edazavr.data.remote
 
 import android.content.Context
 import arrow.core.Either
+import com.nikitayasiulevich.edazavr.data.FileInfo
+import com.nikitayasiulevich.edazavr.data.model.DishesListDto
+import com.nikitayasiulevich.edazavr.data.model.RestaurantDto
 import com.nikitayasiulevich.edazavr.data.model.RestaurantsListDto
 import com.nikitayasiulevich.edazavr.data.remote.request.LoginRequest
 import com.nikitayasiulevich.edazavr.data.remote.request.RefreshTokenRequest
 import com.nikitayasiulevich.edazavr.data.remote.response.AuthResponse
 import com.nikitayasiulevich.edazavr.data.remote.response.TokenResponse
 import com.nikitayasiulevich.edazavr.data.model.UserDTO
+import com.nikitayasiulevich.edazavr.data.remote.response.ImageUploadResponse
+import com.nikitayasiulevich.edazavr.domain.model.Restaurant
 import com.nikitayasiulevich.edazavr.utils.Constants
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -39,7 +44,11 @@ interface ApiService {
 
     suspend fun getRestaurants(): RestaurantsListDto
 
-    //suspend fun getRestaurants(): RestaurantsListDto
+    suspend fun getRestaurant(restaurantId: String): RestaurantDto
+
+    suspend fun getDishes(restaurantId: String): DishesListDto
+
+    suspend fun uploadImage(fileInfo: FileInfo, onUpload: (Long, Long?) -> Unit ): ImageUploadResponse?
 
     companion object {
         fun create(context: Context): ApiService {

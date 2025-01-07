@@ -1,25 +1,27 @@
 package com.nikitayasiulevich.edazavr.data.mapper
 
+import com.nikitayasiulevich.edazavr.data.model.DishesListDto
 import com.nikitayasiulevich.edazavr.data.model.RestaurantsListDto
+import com.nikitayasiulevich.edazavr.domain.model.Dish
 import com.nikitayasiulevich.edazavr.domain.model.Restaurant
 
 class DishMapper {
 
-    /*fun mapDishesListDtoToDishes(restaurantsListDto: RestaurantsListDto): List<Restaurant> {
-        val result = mutableListOf<Restaurant>()
-        val restaurantsFromDto = restaurantsListDto.restaurants
-        for (restaurantFromDto in restaurantsFromDto) {
-            val restaurant = Restaurant(
-                id = restaurantFromDto.id,
-                name = restaurantFromDto.restaurantName,
-                description = restaurantFromDto.restaurantDescription,
-                address = restaurantFromDto.restaurantAddress,
-                photoUrl = restaurantFromDto.restaurantPhotoUrl
+    fun mapDishesListDtoToDishes(dishesListDto: DishesListDto): List<Dish> {
+        val result = mutableListOf<Dish>()
+        val dishesFromDto = dishesListDto.dishes
+        for (dishFromDto in dishesFromDto) {
+            val dish = Dish(
+                id = dishFromDto.id,
+                name = dishFromDto.name,
+                description = dishFromDto.description,
+                photoUrl = dishFromDto.photo,
+                price = dishFromDto.price
             )
-            result.add(restaurant)
+            result.add(dish)
         }
         return result
-    }*/
+    }
 
     /*fun mapCollectionsListDtoToFeaturedCollections(collectionsListDto: CollectionsListDto): List<FeaturedCollection> {
         val result = mutableListOf<FeaturedCollection>()

@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun ShoppingCartScreen(
+    user: Int,
     onPayClickListener: (String) -> Unit
 ) {
     Column(
@@ -18,7 +19,7 @@ fun ShoppingCartScreen(
             .fillMaxSize()
             .background(color = Color.Red)
     ) {
-        Text(text = "ShoppingCartScreen")
+        Text(text = "ShoppingCartScreen - $user")
         Button(onClick = {
             onPayClickListener( "orderId")
         }) {

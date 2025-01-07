@@ -19,9 +19,10 @@ fun AppNavGraph(
 
     homeScreenContent: @Composable () -> Unit,
     menuScreenContent: @Composable (String) -> Unit,
+    dishesScreenContent: @Composable (String) -> Unit,
     profileScreenContent: @Composable (String) -> Unit,
-    /*ordersScreenContent: @Composable (String) -> Unit,
-    bookmarksScreenContent: @Composable (String) -> Unit,
+    ordersScreenContent: @Composable () -> Unit,
+    /*bookmarksScreenContent: @Composable (String) -> Unit,
     addressesScreenContent: @Composable (String) -> Unit,
     cardsScreenContent: @Composable (String) -> Unit,*/
 
@@ -39,7 +40,9 @@ fun AppNavGraph(
         )
         homeScreenNavGraph(
             homeScreenContent = homeScreenContent,
-            menuScreenContent = menuScreenContent
+            menuScreenContent = menuScreenContent,
+            dishesScreenContent = dishesScreenContent,
+            ordersScreenContent = ordersScreenContent
         )
         shoppingCartScreenNavGraph(
             shoppingCartScreenContent = shoppingCartScreenContent,

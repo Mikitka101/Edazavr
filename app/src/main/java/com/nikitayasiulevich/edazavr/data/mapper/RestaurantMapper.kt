@@ -1,5 +1,6 @@
 package com.nikitayasiulevich.edazavr.data.mapper
 
+import com.nikitayasiulevich.edazavr.data.model.RestaurantDto
 import com.nikitayasiulevich.edazavr.data.model.RestaurantsListDto
 import com.nikitayasiulevich.edazavr.domain.model.Restaurant
 
@@ -23,6 +24,20 @@ class RestaurantMapper {
             result.add(restaurant)
         }
         return result
+    }
+
+    fun mapRestaurantDtoToRestaurant(restaurantDto: RestaurantDto): Restaurant {
+        return Restaurant(
+            id = restaurantDto.id.toString(),
+            admin = restaurantDto.admin.toString(),
+            name = restaurantDto.name,
+            description = restaurantDto.description,
+            address = restaurantDto.address,
+            photoUrl = restaurantDto.photo,
+            category = restaurantDto.category,
+            isbBanned = restaurantDto.banned,
+            isActive = restaurantDto.active
+        )
     }
 
     /*fun mapCollectionsListDtoToFeaturedCollections(collectionsListDto: CollectionsListDto): List<FeaturedCollection> {

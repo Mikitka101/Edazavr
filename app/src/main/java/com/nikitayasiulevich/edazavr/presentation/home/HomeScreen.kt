@@ -13,8 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,10 +57,14 @@ fun HomeScreen(
                         .fillMaxSize()
                 ) {
                     Spacer(modifier = Modifier.height(8.dp))
-                    Button(onClick = {
+                    IconButton(onClick = {
                         onMenuClickListener(currentState.user.id)
                     }) {
-                        Text(text = "Menu")
+                        Icon(modifier = Modifier
+                            .padding(10.dp)
+                            .fillMaxSize(),
+                            imageVector = Icons.Outlined.Menu,
+                            contentDescription = "menu")
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                     Restaurants(

@@ -19,6 +19,13 @@ sealed class Screen(
             return "$ROUTE_FOR_ARGS/${Uri.encode(userId)}"
         }
     }
+    data object Dishes : Screen(ROUTE_DISHES) {
+        private const val ROUTE_FOR_ARGS = "restaurant"
+
+        fun getRouteWithArgs(restaurantId: String): String {
+            return "$ROUTE_FOR_ARGS/${Uri.encode(restaurantId)}"
+        }
+    }
 
     data object ShoppingCart : Screen(ROUTE_SHOPPING_CART)
     data object ShoppingCartGraph : Screen(ROUTE_SHOPPING_CART_GRAPH)
@@ -50,6 +57,8 @@ sealed class Screen(
         private const val ROUTE_HOME_GRAPH = "home_graph"
         const val KEY_USER_ID = "user"
         private const val ROUTE_MENU = "menu/{${KEY_USER_ID}}"
+        const val KEY_RESTAURANT_ID = "restaurant"
+        private const val ROUTE_DISHES = "restaurant/{${KEY_RESTAURANT_ID}}"
 
 
         private const val ROUTE_SHOPPING_CART = "shopping_cart"

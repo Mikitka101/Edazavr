@@ -11,7 +11,6 @@ sealed class DishesScreenState {
     data object Loading : DishesScreenState()
 
     data class Dishes(
-        val user: User,
         val restaurant: Restaurant,
         val dishes: List<Dish>,
     ) : DishesScreenState()

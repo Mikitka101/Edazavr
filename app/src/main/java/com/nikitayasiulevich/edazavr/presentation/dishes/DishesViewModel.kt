@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.nikitayasiulevich.edazavr.data.repository.DishRepository
+import com.nikitayasiulevich.edazavr.data.repository.RestaurantRepository
 import com.nikitayasiulevich.edazavr.domain.model.Dish
 import com.nikitayasiulevich.edazavr.domain.model.Restaurant
 import com.nikitayasiulevich.edazavr.domain.model.User
@@ -13,8 +14,8 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 class DishesViewModel(
-    application: Application,
-    restaurant: Restaurant
+    restaurantId: String,
+    application: Application
 ) : AndroidViewModel(application) {
 
     private val initialState = DishesScreenState.Initial
@@ -23,20 +24,20 @@ class DishesViewModel(
     val screenState: LiveData<DishesScreenState> = _screenState
 
     private val dishRepository = DishRepository(application)
+    private val restaurantRepository = RestaurantRepository(application)
 
     init {
         _screenState.value = DishesScreenState.Loading
-        loadDishes(restaurant)
+        loadDishes(restaurantId)
     }
 
-    fun loadDishes(restaurant: Restaurant) {
+    fun loadDishes(restaurantId: String) {
         _screenState.value = DishesScreenState.Loading
         viewModelScope.launch {
+            val restaurant = restaurantRepository.getRestaurant(restaurantId)
             val dishes = dishRepository.loadDishes(restaurant)
-            val user =
-                User(id = UUID.randomUUID().toString(), login = "client@gmail.com", name = "Client", roles = listOf("client"))
             _screenState.value =
-                DishesScreenState.Dishes(user = user, restaurant = restaurant, dishes = dishes)
+                DishesScreenState.Dishes(restaurant = restaurant, dishes = dishes)
         }
     }
 

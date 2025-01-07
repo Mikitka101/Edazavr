@@ -1,5 +1,6 @@
 package com.nikitayasiulevich.edazavr.presentation.dishes
 
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -33,9 +34,12 @@ import com.nikitayasiulevich.edazavr.ui.theme.Gray
 @Composable
 fun DishesScreen(
     restaurantId: String,
+    application: Application,
     onMenuClickListener: () -> Unit,
 ) {
-    val viewModel: DishesViewModel = viewModel()
+    val viewModel: DishesViewModel = viewModel(
+        factory = DishesViewModelFactory(restaurantId, application)
+    )
 
     val screenState = viewModel.screenState.observeAsState(DishesScreenState.Initial)
 

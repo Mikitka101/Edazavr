@@ -26,4 +26,11 @@ class RestaurantRepository(
 
         return restaurants
     }
+
+    suspend fun getRestaurant(restaurantId: String): Restaurant {
+
+        val response = apiService.getRestaurant(restaurantId)
+
+        return mapper.mapRestaurantDtoToRestaurant(response)
+    }
 }

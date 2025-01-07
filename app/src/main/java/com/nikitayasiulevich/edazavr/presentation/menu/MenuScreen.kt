@@ -32,7 +32,7 @@ import com.nikitayasiulevich.edazavr.ui.theme.LightGray
 fun MenuScreen(
     userId: String,
     onBackPressed: () -> Unit,
-    onItemClickListener: (NavigationItem, String) -> Unit,
+    onItemClickListener: (NavigationItem) -> Unit,
     menuItems: List<NavigationItem>
 ) {
     Column(
@@ -79,7 +79,7 @@ fun MenuScreen(
                 shape = RoundedCornerShape(15.dp),
                 containerColor = LightGray,
                 onClick = {
-                    onItemClickListener(menuItems[0], userId)
+                    onItemClickListener(menuItems[0])
                 }
             ) {
                 Icon(
@@ -102,7 +102,7 @@ fun MenuScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            onItemClickListener(menuItems[it + 1], userId)
+                            onItemClickListener(menuItems[it + 1])
                         }
                 ) {
                     Text(text = stringResource(id = menuItems[it + 1].titleResId))

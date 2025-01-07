@@ -6,80 +6,49 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nikitayasiulevich.edazavr.data.remote.response.ImageUploadResponse
 import com.nikitayasiulevich.edazavr.data.repository.FileRepository
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 import okio.FileNotFoundException
 
 class CreateRestaurantViewModel(
     private val repository: FileRepository
 ) : ViewModel() {
 
-    var state by mutableStateOf(UploadState())
-        private set
-
-    private var uploadJob: Job? = null
+    private val _state = MutableStateFlow<UploadState>(UploadState.Initial)
+    val state = _state.asStateFlow()
 
     fun uploadFile(contentUri: Uri) {
-        uploadJob = repository
-            .uploadFile(contentUri)
-            .onStart {
-                state = state.copy(
-                    isUploading = true,
-                    isUploadComplete = false,
-                    errorMessage = null,
-                    progress = 0f
-                )
-            }
-            .onEach { progressUpdate ->
-                state = state.copy(
-                    progress = progressUpdate.bytesSent / progressUpdate.totalBytes.toFloat()
-                )
-            }
-            .onCompletion { cause ->
-                if (cause == null) {
-                    state = state.copy(
-                        isUploading = false,
-                        isUploadComplete = true
-                    )
-                } else if (cause is CancellationException) {
-                    state = state.copy(
-                        isUploading = false,
-                        errorMessage = "The uploading was cancelled.",
-                        isUploadComplete = false,
-                        progress = 0f
-                    )
+        viewModelScope.launch {
+            _state.value = UploadState.Loading
+            try {
+                val response = repository.uploadFile(contentUri) // Now receives ImageUploadResponse?
+                if (response != null) {
+                    _state.value = UploadState.Success(response)
+                } else {
+                    _state.value = UploadState.Error("Upload failed: Null response")
                 }
+            } catch (e: Exception) {
+                _state.value = UploadState.Error(e.message)
             }
-            .catch { cause ->
-                val message = when (cause) {
-                    is OutOfMemoryError -> "File is too large."
-                    is FileNotFoundException -> "File is not found."
-                    is UnresolvedAddressException -> "No internet connection."
-                    else -> "Something went wrong..."
-                }
-                state = state.copy(
-                    isUploading = false,
-                    errorMessage = message
-                )
-            }
-            .launchIn(viewModelScope)
-    }
-
-    fun cancelUpload() {
-        uploadJob?.cancel()
+        }
     }
 }
 
-data class UploadState(
-    val isUploading: Boolean = false,
-    val isUploadComplete: Boolean = false,
-    val progress: Float = 0f,
-    val errorMessage: String? = null
-)
+
+sealed class UploadState {
+    object Initial : UploadState()
+    object Loading : UploadState()
+    data class Success(val response: ImageUploadResponse) : UploadState()
+    data class Error(val message: String?) : UploadState()
+}

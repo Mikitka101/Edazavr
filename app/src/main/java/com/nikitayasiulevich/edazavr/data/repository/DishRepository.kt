@@ -17,9 +17,10 @@ class DishRepository(
         get() = _dishes.toList()
 
     suspend fun loadDishes(restaurant: Restaurant): List<Dish> {
-        //val response = apiService.getDishes()
+        val response = apiService.getDishes(restaurant.id)
         _dishes.clear()
-        //_dishes.addAll(mapper.mapCollectionsListDtoToFeaturedCollections(response))
+        _dishes.addAll(mapper.mapDishesListDtoToDishes(response))
+
         return dishes
     }
 

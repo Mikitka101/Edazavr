@@ -6,6 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.nikitayasiulevich.edazavr.domain.model.Restaurant
 
 class NavigationState(
     val navHostController: NavHostController
@@ -39,15 +40,8 @@ class NavigationState(
         }
     }
 
-    fun navigateInMenu(route: String, userId: String) {
-        navHostController.navigate(
-            "${
-                route.substring(
-                    0,
-                    route.indexOf('/')
-                )
-            }/${Uri.encode(userId)}"
-        ) {
+    fun navigateInMenu(route: String) {
+        navHostController.navigate(route) {
             launchSingleTop = true
         }
     }
@@ -64,6 +58,10 @@ class NavigationState(
 
     fun navigateToPayment(orderId: String) {
         navHostController.navigate(Screen.Payment.getRouteWithArgs(orderId))
+    }
+
+    fun navigateToDishes(restaurantId: String) {
+        navHostController.navigate(Screen.Dishes.getRouteWithArgs(restaurantId))
     }
 }
 

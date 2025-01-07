@@ -7,5 +7,6 @@ data class Dish(
     val id: UUID,
     val name: String,
     val description: String,
-    val photoUrl: String
+    val photoUrl: String,
+    val price: Float,
 )
